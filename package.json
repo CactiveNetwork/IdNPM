@@ -1,6 +1,6 @@
 {
   "name": "cactive",
-  "version": "1.2.0",
+  "version": "2.1.0",
   "description": "Link in to the vast and epic CactiveNetwork ecosystem.",
   "main": "dist/index.js",
   "scripts": {
@@ -14,5 +14,13 @@
     "Discord"
   ],
   "author": "CactiveNetwork",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^2.6.6",
+    "ws": "^8.2.3"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.12",
+    "@types/ws": "^8.2.0"
+  }
 }

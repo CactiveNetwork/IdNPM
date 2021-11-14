@@ -47,6 +47,8 @@ class Connections extends EventEmitter {
 
         this._socket.on('message', (raw: string) => {
 
+            // console.log(`[🧦] ${raw}`);
+
             try {
 
                 const { event, data } = JSON.parse(raw);
@@ -62,7 +64,7 @@ class Connections extends EventEmitter {
         });
 
         this._socket.once('open', () => this.emit('ready'));
-        this._socket.on('error', (error) => {
+        this._socket.on('error', () => {
             throw FetchError('SOCKET_ERROR');
         })
 
@@ -120,7 +122,7 @@ class Connections extends EventEmitter {
      * @param data Event data
      */
     private socketEmit(event: string, data: { [key: string]: any }) {
-        this._socket.send(JSON.stringify({ event, data }));
+        this._socket.send(JSON.stringify({ event, data, authorization: this._api_key }));
     }
 
     /* ----- API METHODS FOLLOW -----*/
