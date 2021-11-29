@@ -1,6 +1,6 @@
 import Fetch from "node-fetch";
 import FetchError from "./error";
-import User, { UserData } from "./user";
+import User, { PartialUser, ProjectData, UserData } from "./user";
 import WebSocket from 'ws';
 import EventEmitter from "events";
 import { randomUUID } from "crypto";
@@ -21,15 +21,20 @@ declare interface Connections {
 class Connections extends EventEmitter {
 
     options: ConnectionOpts;
-    private _api_key: string;
+    private _token: string;
     private _socket: WebSocket;
     private _socket_store: { [identifier: string]: (event: string, data: { [key: string]: any }) => void };
 
-    constructor(api_key: string, options: ConnectionOpts | { [key: string]: any } = {}) {
+    /**
+     * Creates a client
+     * @param token Authorization token
+     * @param options Client options
+     */
+    constructor(token: string, options: ConnectionOpts | { [key: string]: any } = {}) {
 
         super();
 
-        this._api_key = api_key;
+        this._token = token;
 
         this.options = {
             base_url: options.base_url ?? 'https://api.cactive.network',
@@ -86,7 +91,7 @@ class Connections extends EventEmitter {
 
             let options: { [key: string]: any } = {
                 method,
-                headers: { 'Authorization': this._api_key },
+                headers: { 'Authorization': this._token },
             };
 
             if (data) {
@@ -122,8 +127,56 @@ class Connections extends EventEmitter {
      * @param data Event data
      */
     private socketEmit(event: string, data: { [key: string]: any }) {
-        this._socket.send(JSON.stringify({ event, data, authorization: this._api_key }));
+        this._socket.send(JSON.stringify({ event, data, authorization: this._token }));
     }
+
+    /* ----- OAUTH METHODS FOLLOW -----*/
+
+    /**
+     * Fetches a refresh token based on Identification token from an OAuth gateway
+     * @param identifier_token Identifier token provided by the oauth gateway
+     * @param client_id Project Client Id
+     * @param client_secret Project Client Secret
+     * @param redirect_uri Used Redirect URI
+     * @param scopes Used Scopes
+     * @returns Refresh token
+     */
+    public oauthIdentify(identifier_token: string, client_id: string, client_secret: string, redirect_uri: string, scopes: string[]): Promise<String> {
+        return new Promise((resolve, reject) => {
+            this.request(`identify?token=${identifier_token}&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect_uri}&scope=${scopes.join(',')}`, 'GET')
+                .then(data => {
+                    resolve((data as any).token);
+                })
+                .catch(reject)
+        });
+
+    }
+
+    /**
+     * Creates an Access Token from a Refresh Token
+     * @param refresh_token Refresh token
+     * @returns Access token
+     */
+    public refreshToken(refresh_token: string): Promise<String> {
+        return new Promise((resolve, reject) => {
+            this.request(`refresh?token=${refresh_token}`, 'GET')
+                .then(data => {
+                    resolve((data as any).token);
+                })
+                .catch(reject)
+        });
+    }
+
+    public getUserByAccessToken(access_token: string): Promise<PartialUser> {
+        return new Promise((resolve, reject) => {
+            this.request(`refresh?token=${access_token}`, 'GET')
+                .then(data => {
+                    resolve(data as PartialUser);
+                })
+                .catch(reject)
+        });
+    }
+
 
     /* ----- API METHODS FOLLOW -----*/
 
@@ -252,6 +305,35 @@ class Connections extends EventEmitter {
 
         })
 
+    }
+
+    /**
+     * Creates a new Project
+     * * Requires access to the 'CREATE_PROJECT' permission.
+     * * Max of 25
+     * @returns Resolution result
+     */
+    public createProject(): Promise<ProjectData & { token: string }> {
+        return new Promise((resolve, reject) => {
+            this.request(`PROJECT`, 'PUT')
+                .then(resolve as any)
+                .catch(reject)
+        });
+    }
+
+    /**
+     * Fetches an owned project by ID
+     * @param id Project ID
+     * @returns Project
+     */
+    public fetchProject(id: string): Promise<User> {
+        return new Promise((resolve, reject) => {
+            if (!Constants.UUID_REGEX.test(id)) throw FetchError('INVALID_UUID');
+            this.request(`project/${id}`, 'GET')
+                .then(data => {
+                    resolve(new User(this, data as UserData));
+                }).catch(reject)
+        });
     }
 
 }
