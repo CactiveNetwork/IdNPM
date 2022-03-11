@@ -1,10 +1,12 @@
 {
   "name": "cactive",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Link in to the vast and epic CactiveNetwork ecosystem.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "node test.js"
+    "build": "tsc --project .",
+    "test": "npm run build && node test.js",
+    "dev": "nodemon --exec \"npm run test\" --watch ."
   },
   "keywords": [
     "Cactive",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.12",
-    "@types/ws": "^8.2.0"
+    "@types/ws": "^8.2.0",
+    "nodemon": "^2.0.15"
   }
 }

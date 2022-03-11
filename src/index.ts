@@ -141,7 +141,7 @@ class Connections extends EventEmitter {
      * @param scopes Used Scopes
      * @returns Refresh token
      */
-    public oauthIdentify(identifier_token: string, client_id: string, client_secret: string, redirect_uri: string, scopes: string[]): Promise<String> {
+    public oauthIdentify(identifier_token: string, client_id: string, client_secret: string, redirect_uri: string, scopes: string[]): Promise<string> {
         return new Promise((resolve, reject) => {
             this.request(`identify?token=${identifier_token}&client_id=${client_id}&client_secret=${client_secret}&redirect_uri=${redirect_uri}&scope=${scopes.join(',')}`, 'GET')
                 .then(data => {
@@ -157,7 +157,7 @@ class Connections extends EventEmitter {
      * @param refresh_token Refresh token
      * @returns Access token
      */
-    public refreshToken(refresh_token: string): Promise<String> {
+    public refreshToken(refresh_token: string): Promise<string> {
         return new Promise((resolve, reject) => {
             this.request(`refresh?token=${refresh_token}`, 'GET')
                 .then(data => {

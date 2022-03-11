@@ -1,9 +1,9 @@
 console.clear();
 
 const { Client } = require('./dist');
-const Connections = new Client('...', {
-    base_url: 'http://localhost:2525',
-    socket_url: 'ws://localhost:2525/socket'
+const Connections = new Client('', {
+    // base_url: 'http://localhost:2525',
+    // socket_url: 'ws://localhost:2525/socket'
 })
 
 Connections.on('ready', async () => {
