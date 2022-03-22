@@ -3,12 +3,14 @@ console.clear();
 const { Client } = require('./dist');
 const Connections = new Client('', {
     // base_url: 'http://localhost:2525',
-    // socket_url: 'ws://localhost:2525/socket'
+    // socket_url: 'ws://localhost:2525'
 })
 
 Connections.on('ready', async () => {
 
-    let target = await Connections.getUser('b41271f4-da9f-4ddd-99fb-635a8ff0f36a');
+    console.log('Ready');
+
+    let target = await Connections.getUser('b155824b-4eba-4577-9aef-51f8ebe9f801');
     console.log(`Fetched ${target.display_name}!`);
 
     Connections.registerPayment(1, 'aud', async () => {

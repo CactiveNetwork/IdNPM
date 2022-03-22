@@ -38,7 +38,7 @@ class Connections extends EventEmitter {
 
         this.options = {
             base_url: options.base_url ?? 'https://api.cactive.network',
-            socket_url: options.socket_url ?? 'wss://api.cactive.network/socket'
+            socket_url: options.socket_url ?? 'wss://api.cactive.network/socket/'
         };
 
         // Ensure API key works
@@ -47,7 +47,8 @@ class Connections extends EventEmitter {
                 throw err;
             })
 
-        this._socket = new WebSocket(`${this.options.socket_url}`);
+        console.log(this.options.socket_url);
+        this._socket = new WebSocket(this.options.socket_url);
         this._socket_store = {};
 
         this._socket.on('message', (raw: string) => {
@@ -69,8 +70,8 @@ class Connections extends EventEmitter {
         });
 
         this._socket.once('open', () => this.emit('ready'));
-        this._socket.on('error', () => {
-            throw FetchError('SOCKET_ERROR');
+        this._socket.on('error', (error) => {
+            throw error;
         })
 
     }
