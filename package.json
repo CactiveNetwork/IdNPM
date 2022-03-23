@@ -1,6 +1,6 @@
 {
   "name": "cactive",
-  "version": "2.2.2",
+  "version": "2.2.4",
   "description": "Link in to the vast and epic CactiveNetwork ecosystem.",
   "main": "dist/index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@types/node-fetch": "^2.5.12",
     "@types/ws": "^8.2.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "tsc-watch": "^4.6.2"
   }
 }

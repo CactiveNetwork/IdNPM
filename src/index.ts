@@ -7,7 +7,8 @@ import { randomUUID } from "crypto";
 
 type ConnectionOpts = {
     base_url: string,
-    socket_url: string
+    socket_url: string,
+    verbose: boolean
 }
 
 const Constants = {
@@ -38,7 +39,8 @@ class Connections extends EventEmitter {
 
         this.options = {
             base_url: options.base_url ?? 'https://api.cactive.network',
-            socket_url: options.socket_url ?? 'wss://api.cactive.network/socket/'
+            socket_url: options.socket_url ?? 'wss://api.cactive.network/socket/',
+            verbose: options.verbose ?? false
         };
 
         // Ensure API key works
@@ -47,13 +49,12 @@ class Connections extends EventEmitter {
                 throw err;
             })
 
-        console.log(this.options.socket_url);
         this._socket = new WebSocket(this.options.socket_url);
         this._socket_store = {};
 
         this._socket.on('message', (raw: string) => {
 
-            // console.log(`[🧦] ${raw}`);
+            if (this.options.verbose) console.log(`[🧦] ${raw}`);
 
             try {
 
@@ -86,7 +87,7 @@ class Connections extends EventEmitter {
     private request(endpoint: string, method: 'GET' | 'PUT' | 'POST' | 'DELETE', data?: { [key: string]: any }): Promise<{ [key: string]: any } | void> {
 
         const url = `${this.options.base_url}/${endpoint}`;
-        // console.log(`[📡] ${method} :: ${url}`);
+        if (this.options.verbose) console.log(`[📡] ${method} :: ${url}`);
 
         return new Promise((resolve, reject) => {
 
@@ -170,7 +171,7 @@ class Connections extends EventEmitter {
 
     public getUserByAccessToken(access_token: string): Promise<PartialUser> {
         return new Promise((resolve, reject) => {
-            this.request(`refresh?token=${access_token}`, 'GET')
+            this.request(`oauth_user?token=${access_token}`, 'GET')
                 .then(data => {
                     resolve(data as PartialUser);
                 })

@@ -1,27 +1,37 @@
 console.clear();
 
 const { Client } = require('./dist');
-const Connections = new Client('', {
+const Connections = new Client('...', {
+    // verbose: true
     // base_url: 'http://localhost:2525',
     // socket_url: 'ws://localhost:2525'
 })
 
 Connections.on('ready', async () => {
 
-    console.log('Ready');
+    // Oauth!
 
-    let target = await Connections.getUser('b155824b-4eba-4577-9aef-51f8ebe9f801');
-    console.log(`Fetched ${target.display_name}!`);
+    const refresh = await Connections.oauthIdentify(
+        '',
+        '',
+        '',
+        'http://',
+        ['identify']
+    )
 
-    Connections.registerPayment(1, 'aud', async () => {
-        await target.setService('floral', {
-            premium: true
-        });
+    console.log('Refresh token: ' + refresh);
 
-        console.log(`${target.display_name} now has floral premium!`);
-    })
-        .then(url => console.log(`URL :: ${url}`))
-        .catch(console.error);
+    const access = await Connections.refreshToken(
+        refresh
+    )
+
+    console.log('Access token: ' + access);
+
+    const user = await Connections.getUserByAccessToken(
+        access
+    )
+
+    console.log(user);
 
 })
 
