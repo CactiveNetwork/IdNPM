@@ -77,7 +77,12 @@ class Connections extends EventEmitter {
             throw error;
         })
 
-        this._timer = setTimeout(() => {
+        this._socket.on('close', (r) => {
+            console.log(`[🧦] Socket Closing: ${r}`);
+        })
+
+        this._timer = setInterval(() => {
+            console.log('[🧦] Socket Keepalive Ping');
             this.socketEmit('ping', { identifier: 'ping' })
         }, 5 * 1000);
 
