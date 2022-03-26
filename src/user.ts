@@ -7,6 +7,7 @@ export type UserData = {
 	api_level: "ADMINISTRATOR" | "PROJECT" | "DEFAULT",
 	mfa_enabled: boolean,
 	project: ProjectData | null,
+	email_verified: boolean,
 	services: {
 		name: string,
 		data: { [key: string]: any }
@@ -25,6 +26,7 @@ export type ProjectData = {
 	client_id: string,
 	client_secret: string,
 	redirect_uris: string[],
+	email_verified: boolean,
 }
 
 export type PartialUser = {
@@ -40,6 +42,7 @@ export default class User {
 	services: UserData['services'];
 	connections: UserData['connections'];
 	project: UserData['project'];
+	email_verified: UserData['email_verified'];
 	client: Client;
 
 	constructor(client: Client, user_data: UserData) {
@@ -48,6 +51,7 @@ export default class User {
 		this.api_level = user_data.api_level;
 		this.mfa_enabled = user_data.mfa_enabled;
 		this.services = user_data.services;
+		this.email_verified = user_data.email_verified;
 		this.connections = user_data.connections.filter(c => c.user.id !== null);
 		this.client = client;
 		this.project = user_data.project;

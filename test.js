@@ -9,29 +9,7 @@ const Connections = new Client('...', {
 
 Connections.on('ready', async () => {
 
-    // Oauth!
-
-    const refresh = await Connections.oauthIdentify(
-        '',
-        '',
-        '',
-        'http://',
-        ['identify']
-    )
-
-    console.log('Refresh token: ' + refresh);
-
-    const access = await Connections.refreshToken(
-        refresh
-    )
-
-    console.log('Access token: ' + access);
-
-    const user = await Connections.getUserByAccessToken(
-        access
-    )
-
-    console.log(user);
+    console.log(await (await Connections.getUser('b155824b-4eba-4577-9aef-51f8ebe9f801')).email_verified)
 
 })
 
