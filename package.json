@@ -1,6 +1,6 @@
 {
   "name": "cactive",
-  "version": "2.2.4",
+  "version": "2.2.6",
   "description": "Link in to the vast and epic CactiveNetwork ecosystem.",
   "main": "dist/index.js",
   "scripts": {

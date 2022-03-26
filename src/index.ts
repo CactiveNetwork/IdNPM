@@ -25,6 +25,7 @@ class Connections extends EventEmitter {
     private _token: string;
     private _socket: WebSocket;
     private _socket_store: { [identifier: string]: (event: string, data: { [key: string]: any }) => void };
+    private _timer: NodeJS.Timeout | null;
 
     /**
      * Creates a client
@@ -36,6 +37,7 @@ class Connections extends EventEmitter {
         super();
 
         this._token = token;
+        this._timer = null;
 
         this.options = {
             base_url: options.base_url ?? 'https://api.cactive.network',
@@ -74,6 +76,10 @@ class Connections extends EventEmitter {
         this._socket.on('error', (error) => {
             throw error;
         })
+
+        this._timer = setTimeout(() => {
+            this.socketEmit('ping', { identifier: 'ping' })
+        }, 5 * 1000);
 
     }
 
