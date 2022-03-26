@@ -8,7 +8,8 @@ import { randomUUID } from "crypto";
 type ConnectionOpts = {
     base_url: string,
     socket_url: string,
-    verbose: boolean
+    verbose: boolean,
+    socket_keepalive: number
 }
 
 const Constants = {
@@ -42,7 +43,8 @@ class Connections extends EventEmitter {
         this.options = {
             base_url: options.base_url ?? 'https://api.cactive.network',
             socket_url: options.socket_url ?? 'wss://api.cactive.network/socket/',
-            verbose: options.verbose ?? false
+            verbose: options.verbose ?? false,
+            socket_keepalive: options.socket_keepalive ?? 5 * 1000
         };
 
         // Ensure API key works
@@ -78,13 +80,13 @@ class Connections extends EventEmitter {
         })
 
         this._socket.on('close', (r) => {
-            console.log(`[🧦] Socket Closing: ${r}`);
+            if (this.options.verbose) console.log(`[🧦] Socket Closing: ${r}`);
         })
 
         this._timer = setInterval(() => {
-            console.log('[🧦] Socket Keepalive Ping');
+            if (this.options.verbose) console.log('[🧦] Socket Keepalive Ping');
             this.socketEmit('ping', { identifier: 'ping' })
-        }, 5 * 1000);
+        }, this.options.socket_keepalive);
 
     }
 
