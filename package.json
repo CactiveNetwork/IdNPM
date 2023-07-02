@@ -1,6 +1,6 @@
 {
   "name": "@cactive/id",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interaction with the ID system.",
   "main": "dist/index.js",
   "scripts": {
@@ -16,6 +16,7 @@
   "author": "Cactive",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^20.3.3",
     "phin": "^3.7.0"
   },
   "devDependencies": {

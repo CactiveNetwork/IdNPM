@@ -37,7 +37,7 @@ class Connections {
             }).then(res => {
                 const ok = !res.statusCode ? false : res.statusCode >= 200 && res.statusCode < 300;
 
-                if (ok) { try { resolve(JSON.parse(res.body.toString()) as T) } catch (e) { reject(e) }; }
+                if (ok) { try { resolve(JSON.parse(res.body.toString()) as T) } catch (e) { reject(e) } }
                 else if (res.statusCode === 400) reject(res.statusMessage);
                 else reject(`Server Error: ${res.statusMessage || res.statusCode || 'Unknown'}`);
             });
@@ -78,7 +78,7 @@ class Connections {
      * @returns User
      */
     public getUserByAccessToken(access_token: string) {
-        this.$<ScopedUser>(`oauth/user`, 'POST', { token: access_token })
+        return this.$<ScopedUser>(`oauth/user`, 'POST', { token: access_token })
     }
 
     /**
