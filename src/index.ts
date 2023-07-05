@@ -11,7 +11,7 @@ class Connections {
     private _token: string;
     private _options: ConnectionOpts;
 
-    constructor(token: string, options: Partial<ConnectionOpts>) {
+    constructor(token: string, options: Partial<ConnectionOpts> = {}) {
 
         this._token = token;
 
